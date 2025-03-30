@@ -65,6 +65,6 @@ def add_node(parent, info):
 nodeinfo = [[5,3],[11,5],[13,3],[3,5],[6,1],[1,3],[8,6],[7,2],[2,2]]		#TC no.1
 print(solution(nodeinfo)) 
 nodeinfo = [[5, 3], [3, 4], [7, 2], [2, 5], [6, 1]]		#TC no.2
-print(solution(nodeinfo))  # [[5, 3, 2, 7, 6], [2, 6, 7, 3, 5]]
+print(solution(nodeinfo))  # [[4, 2, 1, 3, 5], [5, 3, 1, 2, 4]]
 # main end!
 
