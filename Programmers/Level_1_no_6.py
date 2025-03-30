@@ -1,65 +1,62 @@
 from sys import setrecursionlimit
+setrecursionlimit(10000)  # 깊은 재귀 처리를 위해 제한 증가
 
-# 재귀 깊이 제한 설정
-setrecursionlimit(10000)
+class TreeNode:
+    def __init__(self, data):
+        self.node_id = data[2]  # 노드 번호
+        self.coordinates = data[:2]  # [x, y] 좌표
+        self.left_child = None  # 왼쪽 서브트리
+        self.right_child = None  # 오른쪽 서브트리
 
-class Node:
-    def __init__(self, info):
-        self.num = info[2]  # 노드 번호
-        self.pos = info[:2]  # [x, y] 좌표
-        self.left = None     # 왼쪽 자식
-        self.right = None    # 오른쪽 자식
-
-def solution(nodeinfo):
-    # 각 노드에 번호를 추가하고, y 값을 기준으로 내림차순 정렬
-    for idx, info in enumerate(nodeinfo):
-        info.append(idx + 1)
-    
-    nodeinfo.sort(key=lambda x: (-x[1], x[0]))  # y 내림차순, x 오름차순
+def build_binary_tree(node_data):
+    # 각 노드에 번호를 추가하고 y값 내림차순, x값 오름차순으로 정렬
+    for index, data in enumerate(node_data):
+        data.append(index + 1)
+    node_data.sort(key=lambda n: (-n[1], n[0]))
     
     # 첫 번째 노드를 루트로 설정
-    tree = Node(nodeinfo[0])
+    root_node = TreeNode(node_data[0])
     
-    # 나머지 노드들을 트리에 추가
-    for info in nodeinfo[1:]:
-        add_node(tree, info)
+    # 나머지 노드를 트리에 추가
+    for data in node_data[1:]:
+        insert_node(root_node, data)
     
-    # 전위 순회와 후위 순회 결과 반환
-    return [pre_order(tree), post_order(tree)]
+    # 전위 순회 및 후위 순회 수행
+    return [preorder_traversal(root_node), postorder_traversal(root_node)]
 
-def pre_order(node):
-    """전위 순회: 루트 -> 왼쪽 서브트리 -> 오른쪽 서브트리"""
-    path = [node.num]
-    if node.left:
-        path.extend(pre_order(node.left))
-    if node.right:
-        path.extend(pre_order(node.right))
-    return path
-
-def post_order(node):
-    """후위 순회: 왼쪽 서브트리 -> 오른쪽 서브트리 -> 루트"""
-    path = []
-    if node.left:
-        path.extend(post_order(node.left))
-    if node.right:
-        path.extend(post_order(node.right))
-    path.append(node.num)
-    return path
-
-def add_node(parent, info):
-    """트리에 노드를 추가하는 함수"""
-    if parent.pos[0] > info[0]:  # 왼쪽 서브트리
-        if parent.left:
-            add_node(parent.left, info)
+def insert_node(parent_node, new_data):
+    """ 이진트리에 새로운 노드를 추가하는 함수 """
+    if parent_node.coordinates[0] > new_data[0]:  # 왼쪽 서브트리로 배치
+        if parent_node.left_child:
+            insert_node(parent_node.left_child, new_data)
         else:
-            parent.left = Node(info)
-    else:  # 오른쪽 서브트리
-        if parent.right:
-            add_node(parent.right, info)
+            parent_node.left_child = TreeNode(new_data)
+    else:  # 오른쪽 서브트리로 배치
+        if parent_node.right_child:
+            insert_node(parent_node.right_child, new_data)
         else:
-            parent.right = Node(info)
+            parent_node.right_child = TreeNode(new_data)
 
+def preorder_traversal(current_node):
+    """ 전위 순회: 루트 -> 왼쪽 -> 오른쪽 """
+    traversal_path = []
+    if current_node:
+        traversal_path.append(current_node.node_id)
+        traversal_path += preorder_traversal(current_node.left_child)
+        traversal_path += preorder_traversal(current_node.right_child)
+    return traversal_path
 
+def postorder_traversal(current_node):
+    """ 후위 순회: 왼쪽 -> 오른쪽 -> 루트 """
+    traversal_path = []
+    if current_node:
+        traversal_path += postorder_traversal(current_node.left_child)
+        traversal_path += postorder_traversal(current_node.right_child)
+        traversal_path.append(current_node.node_id)
+    return traversal_path
+
+def solution(nodeinfo):
+    return build_binary_tree(nodeinfo)
 # main start!
 
 nodeinfo = [[5,3],[11,5],[13,3],[3,5],[6,1],[1,3],[8,6],[7,2],[2,2]]		#TC no.1
